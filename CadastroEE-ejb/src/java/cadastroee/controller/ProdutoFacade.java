@@ -1,31 +1,52 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cadastroee.controller;
 
 import cadastroee.model.Produto;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 
-/**
- *
- * @author Admin
- */
 @Stateless
-public class ProdutoFacade extends AbstractFacade<Produto> implements ProdutoFacadeLocal {
+public class ProdutoFacade implements ProdutoFacadeLocal {
 
-    @PersistenceContext(unitName = "CadastroEE-ejbPU")
+    @PersistenceContext(unitName = "CadastroEEPU")
     private EntityManager em;
 
     @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    public void create(Produto produto) {
+        em.persist(produto);
     }
 
-    public ProdutoFacade() {
-        super(Produto.class);
+    @Override
+    public void edit(Produto produto) {
+        em.merge(produto);
     }
-    
+
+    @Override
+    public void remove(Produto produto) {
+        em.remove(em.merge(produto));
+    }
+
+    @Override
+    public Produto find(Object id) {
+        return em.find(Produto.class, id);
+    }
+
+    @Override
+    public List<Produto> findAll() {
+        return em.createQuery("SELECT p FROM Produto p", Produto.class).getResultList();
+    }
+
+    @Override
+    public List<Produto> findRange(int[] range) {
+        return em.createQuery("SELECT p FROM Produto p", Produto.class)
+                 .setMaxResults(range[1] - range[0])
+                 .setFirstResult(range[0])
+                 .getResultList();
+    }
+
+    @Override
+    public int count() {
+        return ((Long) em.createQuery("SELECT COUNT(p) FROM Produto p").getSingleResult()).intValue();
+    }
 }

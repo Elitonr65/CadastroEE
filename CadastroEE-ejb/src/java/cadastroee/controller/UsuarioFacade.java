@@ -16,7 +16,7 @@ import jakarta.persistence.PersistenceContext;
 @Stateless
 public class UsuarioFacade extends AbstractFacade<Usuario> implements UsuarioFacadeLocal {
 
-    @PersistenceContext(unitName = "CadastroEE-ejbPU")
+    @PersistenceContext(unitName = "CadastroEEPU")
     private EntityManager em;
 
     @Override
